@@ -1,0 +1,47 @@
+<h1>Inventory</h1>
+<div class="alert alert-success" *ngIf='message'>{{message}}</div>
+<div class="container">
+    <div class="right">
+    <button (click) ="addInventory()" class="btn btn-warning">Add Inventory</button>
+    &nbsp;
+    <button (click) ="debitInventory()" class="btn btn-warning">Debit Inventory</button>    
+        </div>
+</div>
+&nbsp;
+<div class="container">
+<table class="table table-bordered table-hover table-striped">
+    <!-- <caption>Items</caption> -->
+    <thead>
+        <tr>
+            <th>Item Code</th>
+            <th>Item Description</th>
+            <th>Warehouse Number</th>
+            <th>Vendor Id</th>
+            <th>Vendor Description</th>
+            <th>Supplier Id</th>
+            <th>Supplier Description</th>
+            <th>Inventory Credited</th>
+            <th>Inventory Debitted</th>
+            <th>Closing Balance</th>
+            <th>Created Date</th>
+            <th>Comments</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let inventory of inventories">
+            <td align="Left">{{inventory.item.itemCode}}</td>
+            <td align="Left">{{inventory.item.itemDescription}}</td>
+            <td align="Left">{{inventory.item.warehouseNumber}}</td>
+            <td align="Left">{{inventory.vendor?.vendorId || ''}}</td>
+            <td align="Left">{{inventory.vendor?.vendorDescription || ''}}</td>
+            <td align="Left">{{inventory.supplier?.supplierId || ''}}</td>
+            <td align="Left">{{inventory.supplier?.supplierDescription || ''}}</td>
+            <td align="Left">{{inventory.inventoryCredited}}</td>
+            <td align="Left">{{inventory.inventoryDebited}}</td>
+            <td align="Left">{{inventory.currentInventory}}</td>
+            <td align="Left">{{inventory.createdDate | date : 'short'}}</td>
+            <td align="Left">{{inventory.comments}}</td>
+        </tr>
+    </tbody>
+</table>
+</div>

@@ -1,0 +1,31 @@
+<h1>Suppliers</h1>
+<div class="alert alert-success" *ngIf='message'>{{message}}</div>
+<div class="container">
+    <div class="right">
+    <button (click) ="addSupplier()" class="btn btn-warning">Add Supplier</button>
+    </div>
+</div>
+&nbsp;
+<div class="container">
+<table class="table">
+    <!-- <caption>Items</caption> -->
+    <thead>
+        <tr>
+            <th>Supplier Id</th>
+            <th>Descrption</th>
+            <th>Created Date</th>
+            <th>Update</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let supplier of suppliers">
+            <td align="Left">{{supplier.supplierId}}</td>
+            <td align="Left">{{supplier.supplierDescription}}</td>
+            <td align="Left">{{supplier.createdDate | date | uppercase}}</td>
+            <td><button (click) ="updateSupplier(supplier.supplierId)" class="btn btn-success">Update</button></td>
+            <td><button (click) ="deleteSupplier(supplier.supplierId)" class="btn btn-warning">Delete</button></td>
+        </tr>
+    </tbody>
+</table>
+</div>

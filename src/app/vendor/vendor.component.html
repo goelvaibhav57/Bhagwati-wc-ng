@@ -1,0 +1,14 @@
+<H1>vendor</H1>
+<div *ngIf="checkValidity()" class = "alert alert-danger">{{errorMessage}}</div>
+<div class="alert alert-danger" *ngIf='apiError'>{{apiError}}</div>
+<div class="container">
+    <fieldset class="form-group">
+        <label>Name</label>
+        <input type="text" [(ngModel)] = "vendor.vendorId" class="form-control" name="name" required = "required">
+    </fieldset>
+    <fieldset class="form-group">
+        <label>Description</label>
+        <input type="text" [(ngModel)] = "vendor.vendorDescription" class="form-control" name="description" required = "required">
+    </fieldset>
+    <button class ="btn btn-success" (click)="saveVendor()">Save</button>
+</div>

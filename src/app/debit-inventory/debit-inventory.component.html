@@ -1,0 +1,28 @@
+<H1>Debit Inventory</H1>
+<div *ngIf="checkValidity()" class="alert alert-danger">{{errorMessage}}</div>
+<div class="container">
+    <fieldset class="form-group">
+        <label>Inventory count to be debitted</label>
+        <input type="number" [(ngModel)] = "inventory.inventoryDebited" class="form-control" name="inventoryDebited" required>
+    </fieldset>
+    <fieldset class="form-group">
+        <label>Sent to vendor</label>
+        <br>
+        <div class="dropdown-search" [ngClass]="{'open':shown,'small':size=='small'}">
+            <span class="dropdown-search-btn" (click)="show($event)">{{selected}}</span>
+            <div class="dropdown-search-dropdown">
+                <input type="text" placeholder="Search" [(ngModel)]="val" #searchfield (keyup)="search(val)" />
+                <div class="dropdown-search-scroller">
+                    <div class="dropdown-search-item" *ngFor="let item of list" (click)="select($event,item)">
+                        {{item.vendorDescription}}</div>
+                    <div class="dropdown-search-404" *ngIf="list.length == 0">No Result Found</div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    <fieldset class="form-group">
+        <label>Comments</label>
+        <input type="text" [(ngModel)] = "inventory.comments" class="form-control" name="comments" required = "required">
+    </fieldset>
+    <button class ="btn btn-success" (click)="debitInventory()">Save</button>
+</div>

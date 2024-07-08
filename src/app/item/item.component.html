@@ -1,0 +1,21 @@
+<H1>Item</H1>
+<div *ngIf="checkValidity()" class = "alert alert-danger">{{errorMessage}}</div>
+<div class="alert alert-danger" *ngIf='apiError'>{{apiError}}</div>
+<div class="container">
+    <fieldset class="form-group">
+        <label>Item Code</label>
+        <input type="text" [(ngModel)] = "item.itemCode" class="form-control" name="itemCode" required = "required">
+    </fieldset>
+    <fieldset class="form-group">
+        <label>Item Description</label>
+        <input type="text" [(ngModel)] = "item.itemDescription" class="form-control" name="itemDescription" required = "required">
+    </fieldset>
+    <fieldset class="form-group">
+        <label>Warehouse Number</label>
+        <select class="form-control" name = "warehouseNumber" required [(ngModel)]="item.warehouseNumber"> 
+            <option value = 1>Warehouse 1</option>
+            <option value = 2>Warehouse 2</option>
+          </select>
+    </fieldset>
+    <button class ="btn btn-success" (click)="saveItem()">Save</button>
+</div>

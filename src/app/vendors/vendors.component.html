@@ -1,0 +1,31 @@
+<h1>Vendors</h1>
+<div class="alert alert-success" *ngIf='message'>{{message}}</div>
+<div class="container">
+    <div class="right">
+    <button (click) ="addVendor()" class="btn btn-warning">Add Vendor</button>
+    </div>
+</div>
+&nbsp;
+<div class="container">
+<table class="table">
+    <!-- <caption>Items</caption> -->
+    <thead>
+        <tr>
+            <th>Vendor Id</th>
+            <th>Descrption</th>
+            <th>Created Date</th>
+            <th>Update</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let vendor of vendors">
+            <td align="Left">{{vendor.vendorId}}</td>
+            <td align="Left">{{vendor.vendorDescription}}</td>
+            <td align="Left">{{vendor.createdDate | date | uppercase}}</td>
+            <td><button (click) ="updateVendor(vendor.vendorId)" class="btn btn-success">Update</button></td>
+            <td><button (click) ="deleteVendor(vendor.vendorId)" class="btn btn-warning">Delete</button></td>
+        </tr>
+    </tbody>
+</table>
+</div>

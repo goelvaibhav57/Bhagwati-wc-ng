@@ -1,0 +1,41 @@
+
+<h1>Items</h1>
+<div class="alert alert-success" *ngIf='message'>{{message}}</div>
+
+<div class="container">
+    <div class="right">
+    <input [(ngModel)]="filterValue" #ctrl="ngModel" />
+    &nbsp;
+    <button (click)="filterItems()"  class="btn btn-warning">Search Item</button>
+    &nbsp;&nbsp;
+    <button (click) ="addItem()" class="btn btn-warning">Add Item</button>
+    </div>
+</div>
+&nbsp;
+<div class="container">
+<table class="table table-bordered table-hover table-striped">
+    <!-- <caption>Items</caption> -->
+    <thead>
+        <tr>
+            <th>Item Code</th>
+            <th>Description</th>
+            <th>Warehouse Number</th>
+            <th>Created Date</th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of filteredItems">
+            <td align="Left">{{item.itemCode}}</td>
+            <td align="Left">{{item.itemDescription}}</td>
+            <td align="Left">{{item.warehouseNumber}}</td>
+            <td align="Left">{{item.createdDate | date | uppercase}}</td>
+            <td><button (click) ="getInventory(item.itemCode)" class="btn btn-warning">Get Inventory</button></td>
+            <td><button (click) ="updateItem(item.itemCode)" class="btn btn-success">Update Item</button></td>
+            <td><button (click) ="deleteItem(item.itemCode)" class="btn btn-warning">Delete</button></td>
+        </tr>
+    </tbody>
+</table>
+</div>
