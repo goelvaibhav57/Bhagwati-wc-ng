@@ -38,6 +38,7 @@ export class ItemsComponent implements OnInit {
   items: Item[]
   filteredItems: Item[]
   filterValue: string
+  apiError: any
   category = {
     id: 1,
     description: 'Abstract'
@@ -47,14 +48,15 @@ export class ItemsComponent implements OnInit {
     this.refreshItems();
   }
 
-  refreshItems() {
-    this.viewService.retrieveAllItems().pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-      response => {
-        this.items = response;
+    async refreshItems() {
+      try {
+        const data = await this.viewService.fetchAllItems();
+        this.items = data;
         this.filteredItems = [...this.items];
+      } catch (error) {
+        console.error('Error retrieving items:', error);
       }
-    );
-  }
+    }
 
   filterItems() {
     this.filteredItems = this.items.filter(data =>
@@ -63,14 +65,32 @@ export class ItemsComponent implements OnInit {
     )
   }
 
-  deleteItem(id: string) {
-    this.viewService.deleteItem(id).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-      response => {
-        this.message = 'Deleted Successfully';
-        this.inventoryService.deleteInventory(id).subscribe()
-        this.refreshItems();
-      }
-    )
+  // deleteItem(id: string) {
+  //   this.viewService.deleteItem(id).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
+  //     response => {
+  //       this.message = 'Deleted Successfully';
+  //       this.inventoryService.deleteInventory(id).subscribe()
+  //       this.refreshItems();
+  //     }
+  //   )
+  // }
+
+  async deleteItem(id: string) {
+    try {
+      // Step 1: Delete the item
+      await this.viewService.deleteItem(id);
+  
+      // Step 2: Delete inventory (not blocking the next step if you want)
+      await this.inventoryService.deleteInventory(id);
+  
+      // Step 3: Update UI
+      this.message = 'Deleted Successfully';
+      this.refreshItems();
+  
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      this.apiError = 'Unable to delete item.';
+    }
   }
 
   updateItem(id: string) {

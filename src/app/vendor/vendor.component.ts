@@ -28,17 +28,19 @@ export class VendorComponent implements OnInit {
       this.vendor = new Vendor('', '', new Date(), new Date())
     }
     else {
-      this.vendorService.getVendorsById(this.id).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-
-        data => {
-          console.log(data);
-          this.vendor = data?.[0];
-        }
-      )
+      (async () => {
+      try {
+        const data: any = await this.vendorService.getVendorsById(this.id);
+        console.log(data);
+        this.vendor = data?.[0];
+      } catch (error) {
+        console.error('Error fetching vendor:', error);
+      }
+    })();
     }
   }
 
-  saveVendor() {
+  async saveVendor() {
     this.submitted = true
     if(this.checkValidity()){
       return;
@@ -49,15 +51,13 @@ export class VendorComponent implements OnInit {
           statusMessage: 'Vendor added successfully'
         }
       };
-      this.vendorService.addVendor(this.vendor).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-        response => {
-          this.message = 'successfully added';
-          this.router.navigate(['vendors'], navOptions);
-        },
-        error => {
-          this.apiError = 'Duplicate Vendor id is not allowed';
-        } 
-      )
+      try {
+        await this.vendorService.addVendor(this.vendor);
+        this.message = 'successfully added';
+        this.router.navigate(['vendors'], navOptions);
+      } catch (error) {
+        this.apiError = 'Duplicate Vendor id is not allowed';
+      }
     }
     else {
       let navOptions: NavigationExtras = {
@@ -65,16 +65,25 @@ export class VendorComponent implements OnInit {
           statusMessage: 'Vendor updated successfully'
         }
       };
-      this.vendorService.updateVendor(this.id, this.vendor).subscribe(
-        response => {
-          this.message = 'Updated Successfully';
-          this.inventoryService.updateVendorInventory(this.id, this.vendor).pipe(takeUntil(this.ngUnsubscribe)).subscribe();
-          this.router.navigate(['vendors'], navOptions);
-        },
-        error => {
+      try {
+        // Step 1: Update vendor
+        await this.vendorService.updateVendor(this.id, this.vendor);
+    
+        // Step 2: Update vendor inventory
+        await this.inventoryService.updateVendorInventory(this.id, this.vendor);
+    
+        // Step 3: Set success message and navigate
+        this.message = 'Updated Successfully';
+        this.router.navigate(['vendors'], navOptions);
+    
+      } catch (error) {
+        if (error.message?.includes('Duplicate Vendor id')) {
           this.apiError = 'Duplicate Vendor id is not allowed';
-        } 
-      )
+        } else {
+          console.error('Error updating vendor:', error);
+          this.apiError = 'Unable to update vendor.';
+        }
+      }
     }
   }
 

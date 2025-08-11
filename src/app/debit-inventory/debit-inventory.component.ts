@@ -24,6 +24,7 @@ export class DebitInventoryComponent implements OnInit {
   errorMessage: string = 'Vendor and Items to be debitted can not be blank'
   templist = [];
   list = [];
+  apiError: any
   onChange: any = () => { };
   onTouch: any = () => { };
   val = "";
@@ -37,18 +38,20 @@ export class DebitInventoryComponent implements OnInit {
   ngOnInit(): void {
     this.id = this.route.snapshot.params['id'];
     this.item = new Item(this.id, '', 0, new Date(), new Date());
-    this.inventory = new Inventory(0, this.item, null, null, 0, 0, 0, new Date(), '')
-    this.vendorService.getAllVendors().pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-
-      vendorData => {
-        this.vendors = vendorData
-        this.list = vendorData;
-        this.templist = vendorData;
-      }
-    )
+    this.inventory = new Inventory(0, this.item, null, null, 0, 0, 0, new Date(), '');
+    (async () => {
+    try {
+      const vendorData = await this.vendorService.getAllVendors();
+      this.vendors = vendorData;
+      this.list = vendorData;
+      this.templist = vendorData;
+    } catch (err) {
+      console.error('Error fetching vendors:', err);
+    }
+  })();
   }
 
-  debitInventory() {
+  async debitInventory() {
     this.submitted = true;
     if (this.checkValidity()) {
       return;
@@ -59,12 +62,14 @@ export class DebitInventoryComponent implements OnInit {
       }
     };
     this.inventory.vendor = this.selectedVendor;
-    this.inventoryService.debitInventory(this.id, this.inventory).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-      response => {
-        this.message = 'Debitted Successfully';
-        this.router.navigate(['inventory/', this.id], navOptions);
-      }
-    )
+    try {
+      await this.inventoryService.debitInventory(this.id, this.inventory);
+      this.message = 'Debited Successfully';
+      this.router.navigate(['inventory/', this.id], navOptions);
+    } catch (error) {
+      console.error('Error debiting inventory:', error);
+      this.apiError = 'Unable to debit inventory.';
+    }
   }
 
   checkValidity() {

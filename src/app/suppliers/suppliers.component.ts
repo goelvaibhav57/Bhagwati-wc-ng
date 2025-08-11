@@ -39,21 +39,23 @@ export class SuppliersComponent implements OnInit {
     this.refreshSuppliers();
   }
 
-  refreshSuppliers() {
-    this.supplierService.getAllSuppliers().pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-      response => (
-        this.suppliers = response
-      )
-    )
+  async refreshSuppliers() {
+    try {
+      const response = await this.supplierService.getAllSuppliers();
+      this.suppliers = response;
+    } catch (err) {
+      console.error('Error fetching suppliers:', err);
+    }
   }
 
-  deleteSupplier(id: string) {
-    this.supplierService.deleteSupplier(id).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-      response => {
-        this.message = "Deleted Successfully";
-        this.refreshSuppliers();
-      }
-    )
+  async deleteSupplier(id: string) {
+    try {
+      await this.supplierService.deleteSupplier(id);
+      this.message = "Deleted Successfully";
+      this.refreshSuppliers();
+    } catch (err) {
+      console.error('Error deleting supplier:', err);
+    }
   }
 
   updateSupplier(id: string) {

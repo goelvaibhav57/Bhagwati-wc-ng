@@ -28,17 +28,18 @@ export class ItemComponent implements OnInit {
       this.item = new Item('', '', 0, new Date(), new Date())
     }
     else {
-      this.viewService.retrieveItemsById(this.id).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-
-        data => {
-          this.item = data?.[0];
+      (async () => {
+        try {
+          this.item = await this.viewService.retrieveItemsById(this.id);
+        } catch (error) {
+          console.error('Error retrieving item by ID:', error);
         }
-      )
+      })();
     }
   }
 
 
-  saveItem() {
+  async saveItem() {
     this.submitted = true;
     if (this.checkValidity()) {
       return;
@@ -49,14 +50,17 @@ export class ItemComponent implements OnInit {
           statusMessage: 'Item added successfully'
         }
       };
-      this.viewService.addItem(this.item).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-        response => {
-          this.router.navigate(['items'], navOptions);
-        },
-        error => {
-          this.apiError = 'Duplicate Item Code is not allowed';
-        }
-      )
+      try{
+        // Step 1: Add the item
+        await this.viewService.addItem(this.item);
+
+        // Step 2: Navigate
+        this.router.navigate(['items'], navOptions);
+
+      }
+      catch(addItemError){
+        this.apiError = 'Duplicate Item Code is not allowed';
+      }
     }
     else {
       let navOptions: NavigationExtras = {
@@ -64,18 +68,28 @@ export class ItemComponent implements OnInit {
           statusMessage: 'Item updated successfully'
         }
       };
-      this.viewService.updateItem(this.id, this.item).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-        response => {
-          this.inventoryService.updateItemInventory(this.id, this.item).subscribe(
-            responseNew => {
-              this.router.navigate(['items'], navOptions);
-            },
-            error => {
-              this.apiError = 'Duplicate Item Code is not allowed';
-            }
-          )
+      try {
+        // Step 1: Update the item
+        await this.viewService.updateItem(this.id, this.item);
+    
+        try {
+          // Step 2: Update the inventory
+          await this.inventoryService.updateItemInventory(this.id, this.item);
+    
+          // Step 3: Navigate
+          this.router.navigate(['items'], navOptions);
+    
+        } catch (inventoryError) {
+          // Step 4: Inventory update failed
+          this.apiError = 'Duplicate Item Code is not allowed';
         }
-      )
+    
+      } catch (itemError) {
+        console.error('Error updating item:', itemError);
+        this.apiError = 'Duplicate Item Code is not allowed';
+        // Optional: handle main item update failure here
+      }
+      
     }
   }
 

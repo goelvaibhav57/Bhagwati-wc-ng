@@ -19,7 +19,7 @@ export class SupplierComponent implements OnInit {
   submitted: boolean
   apiError: string
   private ngUnsubscribe = new Subject<void>();
-  constructor(private SupplierService: SupplierServiceService, private inventoryService: InventoryServiceService, private route: ActivatedRoute, private router: Router) { }
+  constructor(private supplierService: SupplierServiceService, private inventoryService: InventoryServiceService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
     this.id = this.route.snapshot.params['id'];
@@ -27,17 +27,19 @@ export class SupplierComponent implements OnInit {
       this.supplier = new Supplier('', '', new Date(), new Date())
     }
     else {
-      this.SupplierService.getSuppliersById(this.id).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-
-        data => {
-          console.log(data);
-          this.supplier = data?.[0];
-        }
-      )
+      (async () => {
+      try {
+        const data = await this.supplierService.getSuppliersById(this.id);
+        console.log(data);
+        this.supplier = Array.isArray(data) ? data[0] : data;
+      } catch (err) {
+        console.error('Error fetching supplier:', err);
+      }
+    })();
     }
   }
 
-  saveSupplier() {
+  async saveSupplier() {
     this.submitted = true
     if (this.checkValidity()) {
       return;
@@ -48,15 +50,16 @@ export class SupplierComponent implements OnInit {
           statusMessage: 'Supplier added successfully'
         }
       };
-      this.SupplierService.addSupplier(this.supplier).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-        response => {
-          this.message = 'successfully added';
-          this.router.navigate(['suppliers'], navOptions);
-        },
-        error => {
-          this.apiError = 'Duplicate Supplier id is not allowed';
-        }
-      )
+      try {
+        await this.supplierService.addSupplier(this.supplier);
+    
+        this.message = 'Successfully added';
+        this.router.navigate(['suppliers'], navOptions);
+    
+      } catch (err) {
+        console.error(err);
+        this.apiError = 'Duplicate Supplier id is not allowed';
+      }
     }
     else {
       let navOptions: NavigationExtras = {
@@ -64,16 +67,21 @@ export class SupplierComponent implements OnInit {
           statusMessage: 'Supplier updated successfully'
         }
       };
-      this.SupplierService.updateSupplier(this.id, this.supplier).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-        response => {
-          this.message = 'Updated Successfully';
-          this.inventoryService.updateSupplierInventory(this.id, this.supplier).subscribe();
-          this.router.navigate(['suppliers'], navOptions);
-        },
-        error => {
-          this.apiError = 'Duplicate Supplier id is not allowed';
-        }
-      )
+      try {
+        await this.supplierService.updateSupplier(this.id, this.supplier);
+    
+        this.message = 'Updated Successfully';
+    
+        // Update supplier in inventory
+        await this.inventoryService.updateSupplierInventory(this.id, this.supplier);
+    
+        // Navigate after both updates are done
+        this.router.navigate(['suppliers'], navOptions);
+    
+      } catch (err) {
+        console.error(err);
+        this.apiError = 'Duplicate Supplier id is not allowed';
+      }
     }
   }
 

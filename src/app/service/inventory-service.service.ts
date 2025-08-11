@@ -4,6 +4,7 @@ import { Inventory } from '../inventory/inventory.component';
 import { Item } from '../items/items.component';
 import { Vendor } from '../vendors/vendors.component';
 import { Supplier } from '../suppliers/suppliers.component';
+import { API_BASE_URL } from '../shared/constants'; 
 
 @Injectable({
   providedIn: 'root'
@@ -12,31 +13,103 @@ export class InventoryServiceService {
 
   constructor(private http: HttpClient) { }
 
-  retrieveInventoryById(id:string){
-    return this.http.get<Inventory[]>(`http://localhost:8080/inventory/itemCode/${id}`);
+  async retrieveInventoryById(id: string): Promise<Inventory[]> {
+    const response = await fetch(`${API_BASE_URL}/inventory/itemCode/${id}`);
+  
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  
+    return response.json();
   }
 
-  addInventory(id:string, inventory: Inventory){
-    return this.http.put<Inventory>(`http://localhost:8080/inventory/add/${id}`, inventory);
+  async addInventory(id: string, inventory: Inventory): Promise<Inventory> {
+    const response = await fetch(`${API_BASE_URL}/inventory/add/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(inventory)
+    });
+  
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  
+    return response.json();
   }
 
-  debitInventory(id:string, inventory: Inventory){
-    return this.http.put<Inventory>(`http://localhost:8080/inventory/debit/${id}`, inventory);
+  async debitInventory(id: string, inventory: Inventory): Promise<Inventory> {
+    const response = await fetch(`${API_BASE_URL}/inventory/debit/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(inventory)
+    });
+  
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  
+    return response.json();
   }
 
-  updateItemInventory(id:string, item: Item){
-    return this.http.put<Inventory>(`http://localhost:8080/inventory/update/item/${id}`, item);
+  async updateItemInventory(id: string, item: Item): Promise<Item> {
+    const response = await fetch(`${API_BASE_URL}/inventory/update/item/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(item)
+    });
+  
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  
+    return response.json();
   }
 
-  updateVendorInventory(id:string, vendor: Vendor){
-    return this.http.put<Inventory>(`http://localhost:8080/inventory/update/vendor/${id}`, vendor);
+  async updateVendorInventory(id: string, vendor: Vendor): Promise<Inventory> {
+    const response = await fetch(`${API_BASE_URL}/inventory/update/vendor/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(vendor)
+    });
+  
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  
+    return response.json();
   }
 
-  updateSupplierInventory(id:string, supplier: Supplier){
-    return this.http.put<Inventory>(`http://localhost:8080/inventory/update/supplier/${id}`, supplier);
+  async updateSupplierInventory(id: string, supplier: Supplier): Promise<Inventory> {
+    const response = await fetch(`${API_BASE_URL}/inventory/update/supplier/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(supplier)
+    });
+  
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  
+    return response.json();
   }
 
-  deleteInventory(id:string){
-    return this.http.delete<Inventory>(`http://localhost:8080/inventory/delete/${id}`);
+  async deleteInventory(id: string): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/inventory/delete/${id}`, {
+      method: 'DELETE'
+    });
+  
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
   }
 }

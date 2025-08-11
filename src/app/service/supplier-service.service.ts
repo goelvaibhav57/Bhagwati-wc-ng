@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Supplier } from '../suppliers/suppliers.component';
+import { API_BASE_URL } from '../shared/constants'; 
 
 @Injectable({
   providedIn: 'root'
@@ -9,22 +10,42 @@ export class SupplierServiceService {
 
   constructor(private http: HttpClient) { }
 
-  getAllSuppliers(){
-    return this.http.get<Supplier []>('http://localhost:8080/suppliers/all');
+  async getAllSuppliers(): Promise<Supplier[]> {
+    const res = await fetch(`${API_BASE_URL}/suppliers/all`);
+    if (!res.ok) throw new Error(`Error fetching suppliers: ${res.statusText}`);
+    return res.json();
   }
 
-  getSuppliersById(id:string){
-    return this.http.get<Supplier>(`http://localhost:8080/supplier/${id}`);
+  async getSuppliersById(id: string): Promise<Supplier> {
+    const res = await fetch(`${API_BASE_URL}/supplier/${id}`);
+    if (!res.ok) throw new Error(`Error fetching supplier: ${res.statusText}`);
+    return res.json();
   }
 
+  async deleteSupplier(id: string): Promise<void> {
+    const res = await fetch(`${API_BASE_URL}/delete/supplier/id/${id}`, {
+      method: 'DELETE'
+    });
+    if (!res.ok) throw new Error(`Error deleting supplier: ${res.statusText}`);
+  }
 
-  deleteSupplier(id:string){
-    return this.http.delete(`http://localhost:8080/delete/supplier/id/${id}`);
+  async addSupplier(supplier: Supplier): Promise<Supplier> {
+    const res = await fetch(`${API_BASE_URL}/create/supplier`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(supplier)
+    });
+    if (!res.ok) throw new Error(`Error adding supplier: ${res.statusText}`);
+    return res.json();
   }
-  addSupplier(supplier: Supplier){
-    return this.http.post(`http://localhost:8080/create/supplier`,supplier);
-  }
-  updateSupplier(id:string, supplier: Supplier){
-    return this.http.put(`http://localhost:8080/update/supplier/${id}`,supplier);
+
+  async updateSupplier(id: string, supplier: Supplier): Promise<Supplier> {
+    const res = await fetch(`${API_BASE_URL}/update/supplier/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(supplier)
+    });
+    if (!res.ok) throw new Error(`Error updating supplier: ${res.statusText}`);
+    return res.json();
   }
 }

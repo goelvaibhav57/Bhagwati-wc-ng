@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Item } from '../items/items.component';
+import { API_BASE_URL } from '../shared/constants'; 
 
 @Injectable({
   providedIn: 'root'
@@ -9,21 +10,65 @@ export class ViewServiceService {
 
   constructor(private http: HttpClient) { }
 
-  retrieveAllItems(){
-    return this.http.get<Item[]>('http://localhost:8080/item/all');
-  }
-  retrieveItemsById(id){
-    return this.http.get<Item>(`http://localhost:8080/item/${id}`);
+  async fetchAllItems(): Promise<Item[]> {
+    const response = await fetch(`${API_BASE_URL}/item/all`);
+  
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  
+    return response.json();
   }
 
-  updateItem(id: string, item: Item){
-    return this.http.put<Item>(`http://localhost:8080/update/item/${id}`,item);
+  async retrieveItemsById(id: string): Promise<Item> {
+    const response = await fetch(`${API_BASE_URL}/item/${id}`);
+  
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  
+    return response.json();
   }
 
-  addItem(item: Item){
-    return this.http.post<Item>(`http://localhost:8080/create/item`,item);
+  async updateItem(id: string, item: Item): Promise<Item> {
+    const response = await fetch(`${API_BASE_URL}/update/item/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(item)
+    });
+  
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  
+    return response.json();
   }
-  deleteItem(id){
-    return this.http.delete(`http://localhost:8080/delete/item/${id}`);
+
+  async addItem(item: Item): Promise<Item> {
+    const response = await fetch(`${API_BASE_URL}/create/item`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(item)
+    });
+  
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  
+    return response.json();
+  }
+
+  async deleteItem(id: string): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/delete/item/${id}`, {
+      method: 'DELETE'
+    });
+  
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
   }
 }

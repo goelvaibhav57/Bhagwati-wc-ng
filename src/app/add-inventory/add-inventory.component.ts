@@ -28,6 +28,7 @@ export class AddInventoryComponent implements OnInit {
   onTouch: any = () => { };
   val = "";
   shown = false;
+  apiError: any
   selected: any
   @ViewChild('searchfield', { static: false }) searchfield: ElementRef;
   size = 'small';
@@ -36,19 +37,22 @@ export class AddInventoryComponent implements OnInit {
 
   ngOnInit(): void {
     this.id = this.route.snapshot.params['id'];
-    this.supplierService.getAllSuppliers().pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-
-      supplierData => {
-        this.suppliers = supplierData
-        this.list = supplierData;
-        this.templist = supplierData;
-      }
-    )
+    (async () => {
+    try {
+      console.log('getting suppliers');
+      const supplierData = await this.supplierService.getAllSuppliers();
+      this.suppliers = supplierData;
+      this.list = supplierData;
+      this.templist = supplierData;
+    } catch (err) {
+      console.error('Error fetching suppliers:', err);
+    }
+  })();
     this.item = new Item(this.id, '', 0, new Date(), new Date());
     this.inventory = new Inventory(0, this.item, null, null, 0, 0, 0, new Date(), '')
   }
 
-  addInventory() {
+  async addInventory() {
     this.submitted = true
     if (this.checkValidity()) {
       return;
@@ -59,12 +63,14 @@ export class AddInventoryComponent implements OnInit {
       }
     };
     this.inventory.supplier = this.selectedSupplier;
-    this.inventoryService.addInventory(this.id, this.inventory).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-      response => {
-        this.message = 'Added Successfully';
-        this.router.navigate(['inventory/', this.id], navOptions);
-      }
-    )
+    try {
+      await this.inventoryService.addInventory(this.id, this.inventory);
+      this.message = 'Added Successfully';
+      this.router.navigate(['inventory', this.id], navOptions);
+    } catch (error) {
+      console.error('Error adding inventory:', error);
+      this.apiError = 'Unable to add inventory.';
+    }
   }
 
   checkValidity() {

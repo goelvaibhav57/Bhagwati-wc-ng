@@ -36,24 +36,26 @@ export class VendorsComponent implements OnInit {
   message : string
   private ngUnsubscribe = new Subject<void>();
   ngOnInit(): void {
-    this.refreshvendors();
+    this.refreshVendors();
   }
 
-  refreshvendors(){
-    this.vendorService.getAllVendors().pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-      response => (
-        this.vendors = response
-      )
-    )
+  async refreshVendors() {
+    try {
+      const response = await this.vendorService.getAllVendors();
+      this.vendors = response;
+    } catch (err) {
+      console.error('Error fetching vendors:', err);
+    }
   }
 
-  deleteVendor(id:string){
-    this.vendorService.deleteVendor(id).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-      response => {
-        this.message = "Deleted Successfully";
-        this.refreshvendors();
-      }
-    )
+  async deleteVendor(id: string) {
+    try {
+      await this.vendorService.deleteVendor(id);
+      this.message = "Deleted Successfully";
+      this.refreshVendors();
+    } catch (err) {
+      console.error('Error deleting vendor:', err);
+    }
   }
 
   updateVendor(id:string){

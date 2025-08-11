@@ -45,13 +45,18 @@ export class InventoryComponent implements OnInit {
   message: string = ''
   routeState: any
   private ngUnsubscribe = new Subject<void>();
+
   ngOnInit(): void {
+    console.log("In Inventory call");
     this.id = this.route.snapshot.params['id'];
-    this.inventoryService.retrieveInventoryById(this.id).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-      data => {
-        this.inventories = data;
+    console.log(this.id);
+    (async () => {
+      try {
+        this.inventories = await this.inventoryService.retrieveInventoryById(this.id);
+      } catch (error) {
+        console.error('Error retrieving Inventory by ID:', error);
       }
-    )
+    })();
   }
 
   debitInventory() {
@@ -59,6 +64,7 @@ export class InventoryComponent implements OnInit {
   }
 
   addInventory() {
+    console.log('adding inventory');
     this.router.navigate(['add/inventory/', this.id]);
   }
 
