@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 # ==========================
 # Build Stage
 # ==========================
@@ -7,19 +9,17 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm ci --legacy-peer-deps
 
 COPY . .
 
 RUN npm run build -- --configuration production
 
 # ==========================
-# Runtime Stage
+# Artifact Stage
 # ==========================
-FROM nginx:1.27-alpine
+FROM alpine:3.20
 
-COPY --from=builder /app/dist/inventory-ui /usr/share/nginx/html
+WORKDIR /app
 
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+COPY --from=builder /app/dist/inventory-ui ./
