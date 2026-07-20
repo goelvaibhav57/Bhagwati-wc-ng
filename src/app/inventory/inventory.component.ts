@@ -40,7 +40,7 @@ export class InventoryComponent implements OnInit {
       }
     })
   }
-  id: string
+  id: number
   inventories: Inventory[]
   message: string = ''
   routeState: any

@@ -13,7 +13,7 @@ import { filter, startWith, takeUntil } from 'rxjs/operators';
 })
 export class ItemComponent implements OnInit {
 
-  id: string
+  id: number
   item: Item
   message: string
   submitted: boolean = false
@@ -25,7 +25,7 @@ export class ItemComponent implements OnInit {
   ngOnInit(): void {
     this.id = this.route.snapshot.params['id'];
     if (null == this.id) {
-      this.item = new Item('', '', 0, new Date(), new Date())
+      this.item = new Item(0, '', '', 0, new Date(), new Date())
     }
     else {
       this.viewService.retrieveItemsById(this.id).pipe(takeUntil(this.ngUnsubscribe)).subscribe(

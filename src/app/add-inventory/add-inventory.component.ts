@@ -14,7 +14,7 @@ import { filter, startWith, takeUntil } from 'rxjs/operators';
   styleUrls: ['./add-inventory.component.css']
 })
 export class AddInventoryComponent implements OnInit {
-  id: string
+  id: number
   inventory: Inventory
   message: string
   item: Item
@@ -44,7 +44,7 @@ export class AddInventoryComponent implements OnInit {
         this.templist = supplierData;
       }
     )
-    this.item = new Item(this.id, '', 0, new Date(), new Date());
+    this.item = new Item(this.id,'', '', 0, new Date(), new Date());
     this.inventory = new Inventory(0, this.item, null, null, 0, 0, 0, new Date(), '')
   }
 

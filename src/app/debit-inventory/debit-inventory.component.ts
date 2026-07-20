@@ -14,7 +14,7 @@ import { filter, startWith, takeUntil } from 'rxjs/operators';
   styleUrls: ['./debit-inventory.component.css']
 })
 export class DebitInventoryComponent implements OnInit {
-  id: string
+  id: number
   inventory: Inventory
   item: Item
   vendors: Vendor[]
@@ -36,7 +36,7 @@ export class DebitInventoryComponent implements OnInit {
 
   ngOnInit(): void {
     this.id = this.route.snapshot.params['id'];
-    this.item = new Item(this.id, '', 0, new Date(), new Date());
+    this.item = new Item(this.id,'', '', 0, new Date(), new Date());
     this.inventory = new Inventory(0, this.item, null, null, 0, 0, 0, new Date(), '')
     this.vendorService.getAllVendors().pipe(takeUntil(this.ngUnsubscribe)).subscribe(
 

@@ -13,19 +13,19 @@ export class InventoryServiceService {
 
   constructor(private http: HttpClient) { }
 
-  retrieveInventoryById(id:string){
-    return this.http.get<Inventory[]>(`${API_URL}/inventory/itemCode/${id}`);
+  retrieveInventoryById(id:number){
+    return this.http.get<Inventory[]>(`${API_URL}/inventory/itemId/${id}`);
   }
 
-  addInventory(id:string, inventory: Inventory){
+  addInventory(id:number, inventory: Inventory){
     return this.http.put<Inventory>(`${API_URL}/inventory/add/${id}`, inventory);
   }
 
-  debitInventory(id:string, inventory: Inventory){
+  debitInventory(id:number, inventory: Inventory){
     return this.http.put<Inventory>(`${API_URL}/inventory/debit/${id}`, inventory);
   }
 
-  updateItemInventory(id:string, item: Item){
+  updateItemInventory(id:number, item: Item){
     return this.http.put<Inventory>(`${API_URL}/inventory/update/item/${id}`, item);
   }
 
@@ -37,7 +37,7 @@ export class InventoryServiceService {
     return this.http.put<Inventory>(`${API_URL}/inventory/update/supplier/${id}`, supplier);
   }
 
-  deleteInventory(id:string){
+  deleteInventory(id:number){
     return this.http.delete<Inventory>(`${API_URL}/inventory/delete/${id}`);
   }
 }

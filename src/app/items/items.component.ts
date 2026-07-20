@@ -7,6 +7,7 @@ import { filter, startWith, takeUntil } from 'rxjs/operators';
 
 export class Item {
   constructor(
+    public itemId: number,
     public itemCode: string,
     public itemDescription: string,
     public warehouseNumber: number,
@@ -63,7 +64,7 @@ export class ItemsComponent implements OnInit {
     )
   }
 
-  deleteItem(id: string) {
+  deleteItem(id: number) {
     this.viewService.deleteItem(id).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
       response => {
         this.message = 'Deleted Successfully';

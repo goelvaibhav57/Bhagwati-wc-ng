@@ -32,9 +32,9 @@
             <td align="Left">{{item.itemDescription}}</td>
             <td align="Left">{{item.warehouseNumber}}</td>
             <td align="Left">{{item.createdDate | date | uppercase}}</td>
-            <td><button (click) ="getInventory(item.itemCode)" class="btn btn-warning">Get Inventory</button></td>
-            <td><button (click) ="updateItem(item.itemCode)" class="btn btn-success">Update Item</button></td>
-            <td><button (click) ="deleteItem(item.itemCode)" class="btn btn-warning">Delete</button></td>
+            <td><button (click) ="getInventory(item.itemId)" class="btn btn-warning">Get Inventory</button></td>
+            <td><button (click) ="updateItem(item.itemId)" class="btn btn-success">Update Item</button></td>
+            <td><button (click) ="deleteItem(item.itemId)" class="btn btn-warning">Delete</button></td>
         </tr>
     </tbody>
 </table>

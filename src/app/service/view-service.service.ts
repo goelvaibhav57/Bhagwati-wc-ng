@@ -13,18 +13,18 @@ export class ViewServiceService {
   retrieveAllItems(){
     return this.http.get<Item[]>(`${API_URL}/item/all`);
   }
-  retrieveItemsById(id){
+  retrieveItemsById(id: number){
     return this.http.get<Item>(`${API_URL}/item/${id}`);
   }
 
-  updateItem(id: string, item: Item){
+  updateItem(id: number, item: Item){
     return this.http.put<Item>(`${API_URL}/update/item/${id}`,item);
   }
 
   addItem(item: Item){
     return this.http.post<Item>(`${API_URL}/create/item`,item);
   }
-  deleteItem(id){
+  deleteItem(id: number){
     return this.http.delete(`${API_URL}/delete/item/${id}`);
   }
 }
