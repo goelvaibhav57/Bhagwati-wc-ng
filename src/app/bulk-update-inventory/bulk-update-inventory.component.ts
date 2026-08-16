@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subject, forkJoin } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { Inventory } from '../inventory/inventory.component';
 import { Item } from '../items/items.component';
 import { InventoryServiceService } from '../service/inventory-service.service';
 import { SupplierServiceService } from '../service/supplier-service.service';
@@ -19,6 +18,13 @@ export class BulkInventoryRow {
   ) { }
 }
 
+export interface BulkInventoryRequest {
+  itemId: number;
+  supplierId: string;
+  inventoryCredited: number;
+  comments: string;
+}
+
 @Component({
   selector: 'app-bulk-update-inventory',
   templateUrl: './bulk-update-inventory.component.html',
@@ -27,10 +33,12 @@ export class BulkInventoryRow {
 export class BulkUpdateInventoryComponent implements OnInit {
 
   rows: BulkInventoryRow[] = [];
+  filteredRows: BulkInventoryRow[] = [];
   suppliers: Supplier[] = [];
   message: string = '';
   apiError: string = '';
   submitted: boolean = false;
+  searchText: string = '';
   private ngUnsubscribe = new Subject<void>();
 
   constructor(
@@ -43,6 +51,7 @@ export class BulkUpdateInventoryComponent implements OnInit {
     this.viewService.retrieveAllItems().pipe(takeUntil(this.ngUnsubscribe)).subscribe(
       response => {
         this.rows = response.map(item => new BulkInventoryRow(item, '', null, 0, ''));
+        this.filteredRows = [...this.rows];
       }
     );
 
@@ -53,23 +62,37 @@ export class BulkUpdateInventoryComponent implements OnInit {
     );
   }
 
+  filterItems() {
+    const value = (this.searchText || '').trim().toLowerCase();
+    if (!value) {
+      this.filteredRows = [...this.rows];
+      return;
+    }
+
+    this.filteredRows = this.rows.filter(row =>
+      row.item.itemCode.toLowerCase().includes(value) ||
+      row.item.itemDescription.toLowerCase().includes(value)
+    );
+  }
+
   bulkUpdateInventory() {
     this.submitted = true;
-    const invalidRows = this.rows.filter(row => !row.selectedSupplierId || row.inventoryCredited <= 0);
+    const rowsToUpdate = this.filteredRows.length > 0 ? this.filteredRows : this.rows;
+    const invalidRows = rowsToUpdate.filter(row => !row.selectedSupplierId || row.inventoryCredited <= 0);
     if (invalidRows.length > 0) {
       this.apiError = 'Please select a supplier and enter a count greater than zero for every item.';
       return;
     }
 
     this.apiError = '';
-    const requests = this.rows.map(row => {
-      const supplier = this.suppliers.find(currentSupplier => currentSupplier.supplierId === row.selectedSupplierId);
-      const inventory = new Inventory(0, row.item, null, supplier, 0, row.inventoryCredited, 0, new Date(), row.comments);
-      row.supplier = supplier;
-      return this.inventoryService.addInventory(row.item.itemId, inventory);
-    });
+    const bulkRequest: BulkInventoryRequest[] = rowsToUpdate.map(row => ({
+      itemId: row.item.itemId,
+      supplierId: row.selectedSupplierId,
+      inventoryCredited: row.inventoryCredited,
+      comments: row.comments
+    }));
 
-    forkJoin(requests).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
+    this.inventoryService.bulkAddInventory(bulkRequest).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
       () => {
         this.message = 'Inventory updated successfully';
         this.router.navigate(['items'], { state: { statusMessage: 'Inventory updated successfully' } });
