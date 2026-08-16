@@ -14,6 +14,7 @@ import { AddInventoryComponent } from './add-inventory/add-inventory.component';
 import { DebitInventoryComponent } from './debit-inventory/debit-inventory.component';
 import { SupplierComponent } from './supplier/supplier.component';
 import { SuppliersComponent } from './suppliers/suppliers.component';
+import { BulkUpdateInventoryComponent } from './bulk-update-inventory/bulk-update-inventory.component';
 
 
 const routes: Routes = [
@@ -21,6 +22,7 @@ const routes: Routes = [
   { path:'login' ,component: LoginComponent },
   {path:'welcome/:name',component: WelcomeComponent, canActivate:[RouteGuardService]},
   {path:'items',component: ItemsComponent, canActivate:[RouteGuardService]},
+  {path:'bulk-update-inventory',component: BulkUpdateInventoryComponent, canActivate:[RouteGuardService]},
   {path:'item/update/:id',component: ItemComponent, canActivate:[RouteGuardService]},
   {path:'item/add',component: ItemComponent, canActivate:[RouteGuardService]},
   {path:'inventory/:id',component: InventoryComponent, canActivate:[RouteGuardService]},

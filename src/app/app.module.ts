@@ -20,6 +20,7 @@ import { AddInventoryComponent } from './add-inventory/add-inventory.component';
 import { DebitInventoryComponent } from './debit-inventory/debit-inventory.component';
 import { SupplierComponent } from './supplier/supplier.component';
 import { SuppliersComponent } from './suppliers/suppliers.component';
+import { BulkUpdateInventoryComponent } from './bulk-update-inventory/bulk-update-inventory.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { SuppliersComponent } from './suppliers/suppliers.component';
     AddInventoryComponent,
     DebitInventoryComponent,
     SupplierComponent,
-    SuppliersComponent
+    SuppliersComponent,
+    BulkUpdateInventoryComponent
   ],
   imports: [
     BrowserModule,

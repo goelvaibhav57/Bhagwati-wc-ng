@@ -1,0 +1,48 @@
+<h1>Bulk Inventory Update</h1>
+<div class="alert alert-success" *ngIf="message">{{message}}</div>
+<div class="alert alert-danger" *ngIf="apiError">{{apiError}}</div>
+
+<div class="container">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <input type="text" class="form-control" [(ngModel)]="searchText" (input)="filterItems()" placeholder="Search item by code or description">
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-warning" type="button" (click)="filterItems()">Search</button>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>Item Code</th>
+                <th>Item Description</th>
+                <th>Supplier</th>
+                <th>Items to be added</th>
+                <th>Comments</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let row of filteredRows">
+                <td>{{row.item.itemCode}}</td>
+                <td>{{row.item.itemDescription}}</td>
+                <td>
+                    <select class="form-control" [(ngModel)]="row.selectedSupplierId" name="supplier-{{row.item.itemId}}" required>
+                        <option value="">Select Supplier</option>
+                        <option *ngFor="let supplier of suppliers" [value]="supplier.supplierId">{{supplier.supplierDescription}}</option>
+                    </select>
+                    <div *ngIf="isInvalid(row)" class="text-danger small">Supplier is required</div>
+                </td>
+                <td>
+                    <input type="number" min="1" class="form-control" [(ngModel)]="row.inventoryCredited" name="count-{{row.item.itemId}}" required>
+                    <div *ngIf="isInvalid(row)" class="text-danger small">Count must be greater than zero</div>
+                </td>
+                <td>
+                    <input type="text" class="form-control" [(ngModel)]="row.comments" name="comments-{{row.item.itemId}}">
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button class="btn btn-success" (click)="bulkUpdateInventory()">Bulk Update</button>
+</div>

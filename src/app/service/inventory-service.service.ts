@@ -6,6 +6,13 @@ import { Vendor } from '../vendors/vendors.component';
 import { Supplier } from '../suppliers/suppliers.component';
 import { API_URL } from "../config/api";
 
+export interface BulkInventoryRequest {
+  itemId: number;
+  supplierId: string;
+  inventoryCredited: number;
+  comments: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -19,6 +26,10 @@ export class InventoryServiceService {
 
   addInventory(id:number, inventory: Inventory){
     return this.http.put<Inventory>(`${API_URL}/inventory/add/${id}`, inventory);
+  }
+
+  bulkAddInventory(request: BulkInventoryRequest[]){
+    return this.http.post<Inventory[]>(`${API_URL}/inventory/bulk/add`, request);
   }
 
   debitInventory(id:number, inventory: Inventory){
