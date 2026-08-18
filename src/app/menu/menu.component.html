@@ -4,7 +4,8 @@
         <ul class="navbar-nav">
             <li><a *ngIf = "hardcodedAuthenticationService.isUserLoggedIn()" routerLink="/welcome/Sumit" class="nav-link">Home</a></li>
             <li><a *ngIf = "hardcodedAuthenticationService.isUserLoggedIn()" routerLink="/items" class="nav-link">Items</a></li>
-            <li><a *ngIf = "hardcodedAuthenticationService.isUserLoggedIn()" routerLink="/bulk-update-inventory" class="nav-link">Bulk Update</a></li>
+            <li><a *ngIf = "hardcodedAuthenticationService.isUserLoggedIn()" routerLink="/add-bulk-inventory" class="nav-link">Add Bulk Inventory</a></li>
+            <li><a *ngIf = "hardcodedAuthenticationService.isUserLoggedIn()" routerLink="/debit-bulk-inventory" class="nav-link">Debit Bulk Inventory</a></li>
             <li><a *ngIf = "hardcodedAuthenticationService.isUserLoggedIn()" routerLink="/vendors" class="nav-link">Vendors</a></li>
             <li><a *ngIf = "hardcodedAuthenticationService.isUserLoggedIn()" routerLink="/suppliers" class="nav-link">Suppliers</a></li>
         </ul>
