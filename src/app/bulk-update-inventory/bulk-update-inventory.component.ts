@@ -25,12 +25,19 @@ export interface BulkInventoryRequest {
   comments: string;
 }
 
+export interface BulkInventoryDebitRequest {
+  itemId: number;
+  vendorId: string;
+  inventoryDebited: number;
+  comments: string;
+}
+
 @Component({
-  selector: 'app-bulk-update-inventory',
+  selector: 'app-add-bulk-inventory',
   templateUrl: './bulk-update-inventory.component.html',
   styleUrls: ['./bulk-update-inventory.component.css']
 })
-export class BulkUpdateInventoryComponent implements OnInit {
+export class AddBulkInventoryComponent implements OnInit {
 
   rows: BulkInventoryRow[] = [];
   filteredRows: BulkInventoryRow[] = [];

@@ -1,0 +1,48 @@
+<h1>Bulk Inventory Debit</h1>
+<div class="alert alert-success" *ngIf="message">{{message}}</div>
+<div class="alert alert-danger" *ngIf="apiError">{{apiError}}</div>
+
+<div class="container">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <input type="text" class="form-control" [(ngModel)]="searchText" (input)="filterItems()" placeholder="Search item by code or description">
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-warning" type="button" (click)="filterItems()">Search</button>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>Item Code</th>
+                <th>Item Description</th>
+                <th>Vendor</th>
+                <th>Items to be debited</th>
+                <th>Comments</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let row of filteredRows">
+                <td>{{row.item.itemCode}}</td>
+                <td>{{row.item.itemDescription}}</td>
+                <td>
+                    <select class="form-control" [(ngModel)]="row.selectedVendorId" name="vendor-{{row.item.itemId}}" required>
+                        <option value="">Select Vendor</option>
+                        <option *ngFor="let vendor of vendors" [value]="vendor.vendorId">{{vendor.vendorDescription}}</option>
+                    </select>
+                    <div *ngIf="isInvalid(row)" class="text-danger small">Vendor is required</div>
+                </td>
+                <td>
+                    <input type="number" min="1" class="form-control" [(ngModel)]="row.inventoryDebited" name="count-{{row.item.itemId}}" required>
+                    <div *ngIf="isInvalid(row)" class="text-danger small">Count must be greater than zero</div>
+                </td>
+                <td>
+                    <input type="text" class="form-control" [(ngModel)]="row.comments" name="comments-{{row.item.itemId}}">
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button class="btn btn-success" (click)="bulkDebitInventory()">Bulk Debit</button>
+</div>

@@ -13,6 +13,13 @@ export interface BulkInventoryRequest {
   comments: string;
 }
 
+export interface BulkInventoryDebitRequest {
+  itemId: number;
+  vendorId: string;
+  inventoryDebited: number;
+  comments: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -30,6 +37,10 @@ export class InventoryServiceService {
 
   bulkAddInventory(request: BulkInventoryRequest[]){
     return this.http.post<Inventory[]>(`${API_URL}/inventory/bulk/add`, request);
+  }
+
+  bulkDebitInventory(request: BulkInventoryDebitRequest[]){
+    return this.http.post<Inventory[]>(`${API_URL}/inventory/bulk/debit`, request);
   }
 
   debitInventory(id:number, inventory: Inventory){
