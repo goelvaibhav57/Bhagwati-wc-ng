@@ -13,7 +13,7 @@ export class BulkInventoryDebitRow {
     public item: Item,
     public selectedVendorId: string,
     public vendor: Vendor,
-    public inventoryDebited: number,
+    public inventoryDebited: number | null,
     public comments: string
   ) { }
 }
@@ -43,7 +43,7 @@ export class DebitBulkInventoryComponent implements OnInit {
   ngOnInit(): void {
     this.viewService.retrieveAllItems().pipe(takeUntil(this.ngUnsubscribe)).subscribe(
       response => {
-        this.rows = response.map(item => new BulkInventoryDebitRow(item, '', null, 0, ''));
+        this.rows = response.map(item => new BulkInventoryDebitRow(item, '', null, null, ''));
         this.filteredRows = [...this.rows];
       }
     );
@@ -70,10 +70,17 @@ export class DebitBulkInventoryComponent implements OnInit {
 
   bulkDebitInventory() {
     this.submitted = true;
-    const rowsToUpdate = this.filteredRows.length > 0 ? this.filteredRows : this.rows;
-    const invalidRows = rowsToUpdate.filter(row => !row.selectedVendorId || row.inventoryDebited <= 0);
+    const rowsToUpdate = this.rows.filter(row => this.hasInventoryValue(row));
+    if (rowsToUpdate.length === 0) {
+      this.apiError = 'Enter a count for at least one item to debit inventory.';
+      return;
+    }
+
+    const invalidRows = rowsToUpdate.filter(row =>
+      !row.selectedVendorId || !isFinite(row.inventoryDebited) || row.inventoryDebited <= 0
+    );
     if (invalidRows.length > 0) {
-      this.apiError = 'Please select a vendor and enter a count greater than zero for every item.';
+      this.apiError = 'Select a vendor and enter a count greater than zero for each item with a count.';
       return;
     }
 
@@ -96,8 +103,17 @@ export class DebitBulkInventoryComponent implements OnInit {
     );
   }
 
-  isInvalid(row: BulkInventoryDebitRow) {
-    return this.submitted && (!row.selectedVendorId || row.inventoryDebited <= 0);
+  hasInventoryValue(row: BulkInventoryDebitRow) {
+    return row.inventoryDebited !== null && row.inventoryDebited !== undefined;
+  }
+
+  isVendorInvalid(row: BulkInventoryDebitRow) {
+    return this.submitted && this.hasInventoryValue(row) && !row.selectedVendorId;
+  }
+
+  isCountInvalid(row: BulkInventoryDebitRow) {
+    return this.submitted && this.hasInventoryValue(row) &&
+      (!isFinite(row.inventoryDebited) || row.inventoryDebited <= 0);
   }
 
   ngOnDestroy() {
