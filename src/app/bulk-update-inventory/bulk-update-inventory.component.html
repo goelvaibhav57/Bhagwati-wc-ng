@@ -1,6 +1,7 @@
 <h1>Bulk Inventory Update</h1>
 <div class="alert alert-success" *ngIf="message">{{message}}</div>
 <div class="alert alert-danger" *ngIf="apiError">{{apiError}}</div>
+<div class="alert alert-info">Leave rows blank to skip them. Only items with a count entered will be updated.</div>
 
 <div class="container">
     <div class="row mb-3">
@@ -27,15 +28,15 @@
                 <td>{{row.item.itemCode}}</td>
                 <td>{{row.item.itemDescription}}</td>
                 <td>
-                    <select class="form-control" [(ngModel)]="row.selectedSupplierId" name="supplier-{{row.item.itemId}}" required>
+                    <select class="form-control" [(ngModel)]="row.selectedSupplierId" name="supplier-{{row.item.itemId}}">
                         <option value="">Select Supplier</option>
                         <option *ngFor="let supplier of suppliers" [value]="supplier.supplierId">{{supplier.supplierDescription}}</option>
                     </select>
-                    <div *ngIf="isInvalid(row)" class="text-danger small">Supplier is required</div>
+                    <div *ngIf="isSupplierInvalid(row)" class="text-danger small">Supplier is required for this item</div>
                 </td>
                 <td>
-                    <input type="number" min="1" class="form-control" [(ngModel)]="row.inventoryCredited" name="count-{{row.item.itemId}}" required>
-                    <div *ngIf="isInvalid(row)" class="text-danger small">Count must be greater than zero</div>
+                    <input type="number" min="1" class="form-control" [(ngModel)]="row.inventoryCredited" name="count-{{row.item.itemId}}">
+                    <div *ngIf="isCountInvalid(row)" class="text-danger small">Count must be greater than zero</div>
                 </td>
                 <td>
                     <input type="text" class="form-control" [(ngModel)]="row.comments" name="comments-{{row.item.itemId}}">
